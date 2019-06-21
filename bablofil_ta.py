@@ -8,13 +8,16 @@ def SMA(data, period):
 
     interm = 0
     result = []
+    nan_inp = 0
+    
     for i, v in enumerate(data):
         if math.isnan(data[i]):
             result.append(math.nan)
             interm = 0
+            nan_inp += 1
         else:
             interm += v
-            if (i+1) < period:
+            if (i+1 - nan_inp) < period:
                 result.append(math.nan)
             else:
                 result.append(interm/float(period))
@@ -25,10 +28,10 @@ def SMA(data, period):
 def generalEMA(data, period, multiplier):
     if period <= 1:
         raise Exception("Invalid period")
-    
+
     sma = SMA(data, period)
-    result = []
     
+    result = []
     for k, v in enumerate(sma):
         if math.isnan(v):
             result.append(math.nan)
@@ -55,6 +58,20 @@ def RMA(data, period):
 
 def MMA(data, period):
     return SMMA(data, period)
+
+def T3(data, period):
+    e1 = EMA(data, period)
+    e2 = EMA(e1, period)
+    e3 = EMA(e2, period)
+
+    e1 = list(map(lambda x: x*3, e1))
+    e2 = list(map(lambda x: x*3, e2))
+
+    result = []
+    for i in range(len(data)):
+        result.append(e1[i] - e2[i] + e3[i])
+        
+    return result
 
 def MACD(data, fastperiod, slowperiod, signalperiod):
     macd, macdsignal, macdhist = [], [], []
@@ -137,4 +154,6 @@ def STOCH(high, low, closes, fastk_period, slowk_period, slowd_period):
 def STOCHRSI(data, period, fastk_period, fastd_period):
     rsi = RSI(data, period)
     return STOCH(rsi, rsi, rsi, period, fastk_period, fastd_period)
+
+
 
