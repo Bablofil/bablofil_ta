@@ -1,4 +1,5 @@
 import math
+import statistics
 
 def SMA(data, period):
     if len(data) == 0:
@@ -155,5 +156,37 @@ def STOCHRSI(data, period, fastk_period, fastd_period):
     rsi = RSI(data, period)
     return STOCH(rsi, rsi, rsi, period, fastk_period, fastd_period)
 
+def BBANDS(data, ma=SMA, ma_period=20, dev_val=2):
+    middle = ma(data, ma_period)
 
+    # calculating stddev. We won't count NaN values. Also NaNs are reasons not to use statistics.stddev, numpy, etc.
+    stddevs = []
+    real_data_cnt = 0
+    
+    for i in range(len(data)):
+        if math.isnan(middle[i]):
+            stddevs.append(0)
+            real_data_cnt += 1
+            continue
+
+        if i-real_data_cnt >= ma_period:
+            avg = sum(middle[i-ma_period+1:i+1])/ma_period
+            s = sum(map(lambda x: math.pow(x - avg,2), middle[i-ma_period+1:i+1]))
+            stddev_avg = s/ma_period
+            stddev = math.sqrt(stddev_avg)
+            stddevs.append(stddev)
+        else:
+           stddevs.append(0) 
+
+    upper = []
+    lower = []
+    for i in range(len(middle)):
+        if not math.isnan(middle[i]):
+            upper.append(middle[i]+stddevs[i]*dev_val)
+            lower.append(middle[i]-stddevs[i]*dev_val)
+        else:
+            upper.append(math.nan)
+            lower.append(math.nan)
+    return upper, middle, lower
+    
 
