@@ -73,7 +73,7 @@ def MMA(data, period):
 def D2(data, period):
     ema = EMA(data, period)
     ema_ema = EMA(ema, period)
-    e2 = list(map(lambda x: x*3, ema))
+    e2 = list(map(lambda x: x*2, ema))
     
     result = []
     
