@@ -85,6 +85,10 @@ def D2(data, period):
 def DEMA(data, period):
     return D2(data, period)
 
+# Double exponential moving average
+def DMA(data, period):
+    return D2(data, period)
+
 # Triple Exponential Moving Average
 # https://en.wikipedia.org/wiki/Triple_exponential_moving_average
 def T3(data, period):
@@ -103,6 +107,10 @@ def T3(data, period):
 
 # Triple Exponential Moving Average
 def TEMA(data, period):
+    return T3(data, period)
+
+# Triple Exponential Moving Average
+def TMA(data, period):
     return T3(data, period)
 
 # Moving average convergence/divergence
