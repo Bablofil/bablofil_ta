@@ -1,6 +1,7 @@
 import math
-import statistics
 
+# Simple moving average
+# https://en.wikipedia.org/wiki/Moving_average
 def SMA(data, period):
     if len(data) == 0:
         raise Exception("Empty data")
@@ -26,6 +27,7 @@ def SMA(data, period):
                     interm -= data[i+1-period]
     return result
 
+# Calculates various EMA with different smoothing multipliers, see lower
 def generalEMA(data, period, multiplier):
     if period <= 1:
         raise Exception("Invalid period")
@@ -45,21 +47,46 @@ def generalEMA(data, period, multiplier):
             result.append(ema)
     return result
 
+# Exponential moving average
+# https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average
 def EMA(data, period):
     return generalEMA(data, period, 2/(float(period)+1.0))
 
+# Synonym to EMA
 def EWMA(data, period):
     return EMA(data, period)
 
+# Modified moving average
+# https://en.wikipedia.org/wiki/Moving_average
 def SMMA(data, period):
     return generalEMA(data, period, 1/(float(period)))
 
+# Synonym to SMMA
 def RMA(data, period):
     return SMMA(data, period)
-
+# Synonym to SMMA
 def MMA(data, period):
     return SMMA(data, period)
 
+# Double exponential moving average
+# https://en.wikipedia.org/wiki/Double_exponential_moving_average
+def D2(data, period):
+    ema = EMA(data, period)
+    ema_ema = EMA(ema, period)
+    e2 = list(map(lambda x: x*3, ema))
+    
+    result = []
+    
+    for i in range(len(data)):
+        result.append(e2[i] - ema_ema[i])
+    return result
+
+# Double exponential moving average
+def DEMA(data, period):
+    return D2(data, period)
+
+# Triple Exponential Moving Average
+# https://en.wikipedia.org/wiki/Triple_exponential_moving_average
 def T3(data, period):
     e1 = EMA(data, period)
     e2 = EMA(e1, period)
@@ -74,6 +101,12 @@ def T3(data, period):
         
     return result
 
+# Triple Exponential Moving Average
+def TEMA(data, period):
+    return T3(data, period)
+
+# Moving average convergence/divergence
+# https://en.wikipedia.org/wiki/MACD
 def MACD(data, fastperiod, slowperiod, signalperiod):
     macd, macdsignal, macdhist = [], [], []
 
@@ -101,7 +134,8 @@ def MACD(data, fastperiod, slowperiod, signalperiod):
 
     return macd, macdsignal, macdhist
 
-
+# Relative strength index
+# https://en.wikipedia.org/wiki/Relative_strength_index
 def RSI(data, period):
     u_days = []
     d_days = []
@@ -134,6 +168,8 @@ def RSI(data, period):
 
     return result
 
+# Stochastic oscillator
+# https://en.wikipedia.org/wiki/Stochastic_oscillator
 def STOCH(high, low, closes, fastk_period, slowk_period, slowd_period):
     fastk = []
     
@@ -152,10 +188,14 @@ def STOCH(high, low, closes, fastk_period, slowk_period, slowd_period):
 
     return fastk, slowd
 
+# RSI + STOCH
+# https://www.investopedia.com/terms/s/stochrsi.asp
 def STOCHRSI(data, period, fastk_period, fastd_period):
     rsi = RSI(data, period)
     return STOCH(rsi, rsi, rsi, period, fastk_period, fastd_period)
-
+    
+# Bollinger Bands
+# https://en.wikipedia.org/wiki/Bollinger_Bands
 def BBANDS(data, ma=SMA, ma_period=20, dev_val=2):
     middle = ma(data, ma_period)
 
