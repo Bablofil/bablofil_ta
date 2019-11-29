@@ -236,5 +236,42 @@ def BBANDS(data, ma=SMA, ma_period=20, dev_val=2):
             upper.append(math.nan)
             lower.append(math.nan)
     return upper, middle, lower
+
+# https://en.wikipedia.org/wiki/Money_flow_index
+def MFI(high, low, closes, vol, period):
+    
+    typicals = []
+    raw_money_flow = []
+    money_flow_indexes = []
+
+    for i in range(len(high)):
+
+        typical = (high[i]+low[i]+closes[i])/3
+        typicals.append(typical)
+
+        raw_money_flow.append(typical*vol[i])
+
+        total_positive = 0
+        total_negative = 0
+
+        money_flow_index = math.nan
+
+        if i >= period:
+            for pos, t in enumerate(typicals[i-period+1:i+1]):
+                if t > typicals[i-period + pos]:
+                    total_positive += raw_money_flow[i-period+pos+1]
+                else:
+                    total_negative += raw_money_flow[i-period+pos+1]
+
+            if total_negative != 0:
+                money_flow_ratio =total_positive/total_negative
+            else:
+                money_flow_ratio = 0
+            
+            money_flow_index = 100-100/(1+money_flow_ratio)
+
+        money_flow_indexes.append(money_flow_index)
+
+    return money_flow_indexes
     
 

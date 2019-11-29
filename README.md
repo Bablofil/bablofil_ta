@@ -8,7 +8,7 @@ r = requests.get("https://api.binance.com/api/v1/klines?symbol=LTCBNB&interval=1
 closes = [float(x[4]) for x in r]
 high = [float(x[2]) for x in r]
 low = [float(x[3]) for x in r]
-
+vol = [float(x[5]) for x in r]
 
 print("SMA", ta.SMA(closes, 5))
 print("EMA", ta.EMA(closes, 5))
@@ -29,4 +29,7 @@ upper, middle, lower = ta.BBANDS(closes, ma_period=20, )
 print("BBANDS UPPER",upper)
 print("BBANDS MIDDLE",middle)
 print("BBANDS LOWER",lower)
+
+
+print(ta.MFI(high, low, close, vol, 14))
 ```
