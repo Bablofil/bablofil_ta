@@ -218,8 +218,8 @@ def BBANDS(data, ma=SMA, ma_period=20, dev_val=2):
             continue
 
         if i-real_data_cnt >= ma_period:
-            avg = sum(middle[i-ma_period+1:i+1])/ma_period
-            s = sum(map(lambda x: math.pow(x - avg,2), middle[i-ma_period+1:i+1]))
+            avg = sum(data[i-ma_period+1:i+1])/ma_period
+            s = sum(map(lambda x: math.pow(x - avg,2), data[i-ma_period+1:i+1]))
             stddev_avg = s/ma_period
             stddev = math.sqrt(stddev_avg)
             stddevs.append(stddev)
